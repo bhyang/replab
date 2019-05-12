@@ -32,7 +32,7 @@ class ReplabEnv(gym.Env):
         rospy.init_node is set with random number so we can have multiple
         nodes running at the same time.
 
-        self.goal is set to a hardcoded goal if goal_oriented = False
+        self.goal is set to a fixed, randomly drawn goal if goal_oriented = False
         """
         self.obs_space_low = np.array(
             [-.16, -.15, 0.14, -3.1, -1.6, -1.6, -1.8, -3.1, 0])
@@ -45,7 +45,7 @@ class ReplabEnv(gym.Env):
                                        high=np.array([0.5, 0.25, 0.25, 0.25, 0.5, 0.005]) / 5, dtype=np.float32)
         self.current_pos = None
         #self.goal = np.array([-.14, -.13, 0.26])
-        self.goal = self.sample_goal_for_rollout()
+        self.set_goal(self.sample_goal_for_rollout())
          
     def _start_rospy(self, goal_oriented=False):
         self.rand_init = random.random()
@@ -80,7 +80,7 @@ class ReplabEnv(gym.Env):
 
     def set_goal(self, goal):
         self.goal = goal
-        print(self.goal)
+        print("GOAL: %s" % str(self.goal))
 
     def step(self, action):
         """
@@ -106,8 +106,6 @@ class ReplabEnv(gym.Env):
                  See function get_diagnostics for more info.
         """
         action = np.array(action, dtype=np.float32)
-        #target_pos = np.add(action, self.current_pos)
-        #self.task_finished = False
         self.action_publisher.publish(action)
         self.current_pos = np.array(rospy.wait_for_message(
             "/replab/action/observation", numpy_msg(Floats)).data)
@@ -245,5 +243,4 @@ class ReplabEnv(gym.Env):
         self.current_position_subscriber = rospy.Subscriber(
             "/replab/action/observation", numpy_msg(Floats), self.update_position)
         self.__dict__.update(state)
-        # self._start_rospy(goal_oriented=state['goal_oriented'])
         self.reset()
