@@ -106,17 +106,21 @@ rosrun replab evaluation.py --method [method name] --datapath [path for saving s
 ```
 
 ## RL
-This code is heavily based off of RLKit, available here: https://github.com/vitchyr/rlkit, and a modified Viskit repo, available here: https://github.com/vitchyr/viskit.
+
+This is the code for training and evaluating RL algorithms on REPLAB cells. This is heavily based off of RLKit, available here: https://github.com/vitchyr/rlkit, and a modified Viskit repo, available here: https://github.com/vitchyr/viskit.
+
 
 ### Directory Structure
+Reinforcement Learning on REPLAB files are located in two places: ``/root/ros_ws/rl_scripts/`` and ``/root/ros_ws/src/replab_rl/``. 
 
-This directory only contains a pip package that has the OpenAI Gym Environment for REPLAB and a file in the ``src`` directory that allows us to communicate with ROS through Python3. The actual RL scripts are located in ``/root/ros_ws/rl_scripts/``, which contains two folders: ``rlkit`` and ``viskit``. ``rlkit`` contains the base code from the RLKit repository, and modified example scripts for both fixed and randomized reaching tasks. ``viskit`` contains code from the Viskit repository.
+``/root/ros_ws/src/replab_rl/`` contains two folders, ``gym-replab``, a pip package that has the OpenAI Gym Environment for REPLAB and ``src``, which contains a file that allows us to communicate with ROS through Python3. The actual RL scripts are located in ``/root/ros_ws/rl_scripts/``, which contains two folders: ``rlkit`` and ``viskit``. ``rlkit`` contains the base code from the RLKit repository, and modified example scripts for both fixed and randomized reaching tasks. ``viskit`` contains code from the Viskit repository.
+
 
 ### Prerequisites
 
 To train or evaluate a model on a REPLAB cell, you must first run two scripts in the docker container.
 
-In one window (or tmux session), run 
+In one window, run 
 
 ``` sh /root/ros_ws/start.sh ``` to start communicating with the MoveIt commander.
 
@@ -126,9 +130,10 @@ In another, run
 
 ### Training the models
 
-There are 2 examples in ``/root/ros_ws/rl_scripts/rlkit/examples``, one is designed for a fixed goal (``td3.py``) and the other isn't (``her/her_td3_gym_fetch_reach.py``).
+There are 2 examples in ``/root/ros_ws/rl_scripts/rlkit/examples``, one is designed for a fixed goal (``td3.py``) and the other is designed for a randomized goal (``her/her_td3_gym_fetch_reach.py``).
 
 To get started, run
+
 
 ```
 cd /root/ros_ws/rl_scripts/rlkit/
@@ -142,9 +147,10 @@ For each of these example scripts, the parameters and hyperparameters are easily
 
 For the fixed goal environments, you can modify the fixed goal by directly modifying ``/root/ros_ws/src/replab_rl/gym_replab/gym_replab/envs/replab_env.py``
 
+
 ### Visualizing results
 
-We use Viskit to visualize the results. Run
+RLkit recommends Viskit to visualize the results. To view them, run:
 
 ```
 source activate rlkit
@@ -165,5 +171,5 @@ cd /root/ros_ws/rl_scripts/rlkit
 
 source activate rlkit
 
-python scripts/[POLICY_SCRIPT].py
+python scripts/[POLICY_SCRIPT].py --[args specified in script]
 ```
