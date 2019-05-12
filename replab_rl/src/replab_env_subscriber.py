@@ -44,13 +44,8 @@ def take_action(data):
     Publishes [current x, current y, current z]
     """
     action = data.data
-    #current_pos = np.array(get_state(), dtype=np.float32)
-    #goal = np.add(action, current_pos)
-    #widowx.move_to_position(float(goal[0]), float(goal[1]), float(goal[2]))
     widowx.move_to_joint_position(action)
-    # widowx.move_to_position_and_joint(action)
     current_state = np.array(get_state(), dtype=np.float32)
-    task_finished = False
     observation_publisher.publish(current_state)
 
 

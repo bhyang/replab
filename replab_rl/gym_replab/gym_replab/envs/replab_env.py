@@ -41,8 +41,8 @@ class ReplabEnv(gym.Env):
         observation_space = spaces.Box(
             low=self.obs_space_low, high=self.obs_space_high, dtype=np.float32)
         self.observation_space = observation_space
-        self.action_space = spaces.Box(low=np.array([-0.5, -0.25, -0.25, -0.25, -0.5, -0.005]) / 5,
-                                       high=np.array([0.5, 0.25, 0.25, 0.25, 0.5, 0.005]) / 5, dtype=np.float32)
+        self.action_space = spaces.Box(low=np.array([-0.5, -0.25, -0.25, -0.25, -0.5, -0.005]) / 10,
+                                       high=np.array([0.5, 0.25, 0.25, 0.25, 0.5, 0.005]) / 10, dtype=np.float32)
         self.current_pos = None
         #self.goal = np.array([-.14, -.13, 0.26])
         self.set_goal(self.sample_goal_for_rollout())
