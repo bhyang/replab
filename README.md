@@ -130,6 +130,8 @@ In another, run
 
 ### Training the models
 
+The task is to reach a point in 3d space through controlling the 6 joints of the arm.
+
 There are 2 examples in ``/root/ros_ws/rl_scripts/rlkit/examples``, one is designed for a fixed goal (``td3.py``) and the other is designed for a randomized goal (``her/her_td3_gym_fetch_reach.py``).
 
 To get started, run
