@@ -46,8 +46,35 @@ NEUTRAL_VALUES[0] += .5   # Modify the position of the first servo in the neutra
 widowx.move_to_neutral()  # Move to the new neutral position
 ```
 
+### Configuring Servo Torques
+Operating the WidowX with the default torque limits can be hazardous if the arm experiences collisions, especially if the cell is left to collect data autonomously without human supervision. We recommend using a provided script to set all the servo limits to 50% of maximum torque.
+```
+cd replab_core/scripts
+python configure_servos.py
+```
+Make sure MoveIt! isn't running when using the script. This script does not need to be run again after restarting Docker or powering off the arm.
+
+### Control Noise Compensation
+To perform control noise compensation, run
+```
+rosrun replab_core compute_control_noise.py
+```
+This will move the arm to 25 predefined points along the floor of the arena and measure the error between the goal position and achieved position. Then, it will visualize these errors and print the parameters for the linear model we use to correct for control noise. These parameters can be entered in `replab_core/src/replab_core/config.py` as `CONTROL_NOISE_COEFFICIENT_ALPHA` and `CONTROL_NOISE_COEFFICIENT_BETA`. This will automatically apply the correction when using `widowx.move_to_grasp()`.
+
 ### Robot-Camera Calibration
-If the camera is aligned to our provided reference image and the cell is built to specification, then calibration is not required since our provided calibration matrix (which is already stored in `replab_core/src/replab_core/config.py`) should work out of the box. Otherwise, to compute a new calibration matrix, use
+We prescribe a camera alignment procedure which, once completed, means that you can use the camera-to-robot calibration matrix that is already provided in `replab_core/src/replab_core/config.py`.
+The script overlays the view from the camera along with a reference image of our aligned setup to help the user align both views. 
+```
+cd src/replab_core/scripts
+python cam_align.py --ref_image reference.jpg
+```
+If you have multiple webcams connected, you may need to specify the camera device/path manually using the --cameraA and --cameraB flags (on Ubuntu 16.04, the default path with no other webcams should be /dev/video0 and /dev/video1 for the RGB and depth streams respectively).
+```
+python cam_align.py --cameraA /dev/video0
+```
+To align the images, the camera mount needs to be manually adjusted by hand. To further verify that the cell matches ours, we recommend moving the arm to neutral position and aligning both the arm and the camera in the image jointly.
+
+Otherwise, to compute a new calibration matrix, use
 ```
 rosrun replab_core commander_human.py
 ```
@@ -80,13 +107,17 @@ Before starting data collection, make sure there are objects in the arena. Then 
 rosrun replab_grasping collect_data.py --samples [# of samples] --datapath [path for saving samples]
 ```
 If there are issues with blob detection, considering tuning the `DBSCAN_EPS` and `DBSCAN_MIN_SAMPLES` parameters in `replab_core/src/replab_core/config.py`.
+To label samples, we provide a labeling script that allows the user to manually annotate samples as successes or failures.
+```
+cd replab_grasping/training
+python manual_labeler.py --path [path to data directory]
+```
 
 ### Training the models
 
-The available models are ``fullimage`` and ``pintogupta``. ``fullimage`` uses both RGB and Depth, while ``pintogupta`` uses only RGB images. Their respective performance is detailed in the REPLAB paper. 
+The available models are ``fullimage`` and ``pintogupta``. ``fullimage`` uses both RGB and Depth, while ``pintogupta`` uses only RGB images. Their respective performance is detailed in the REPLAB paper. Pretrained models can be found on the REPLAB website or in the Docker container at `/root/ros_ws/src/replab_grasping/training/models`. The path to the models can be changed in `replab_core/src/replab_core/config.py` by changing `PINTO2016_PRETRAINED_WEIGHTS` and `FULLIMAGE_PRETRAINED_WEIGHTS`.
 
 To train a model, run
-
 ```
 python train.py --batch_size [batch size] --epochs [number of epochs to train for] --lr [learning rate] --method [fullimage or pintogupta] --resultpath [where the results are saved] --datapath [directory where the data is stored (including the .npy files and the 'before' directory] --start [epoch to start training from (used for resuming training)] --weight_decay [weight decay for Adam optimizer]
 ```
