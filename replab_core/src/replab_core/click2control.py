@@ -90,7 +90,6 @@ class Click2Control:
             theta = 0.0
             grasp = np.concatenate([transformed, [theta]], axis=0)
             grasp[2] -= Z_OFFSET
-            grasp[:2] *= CONTROL_NOISE_COEFFICIENT
 
             print('Grasp: ' + str(grasp))
             self.execute_grasp(grasp)

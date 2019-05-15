@@ -2,8 +2,8 @@ import numpy as np
 from geometry_msgs.msg import Quaternion
 
 # MODELS
-PINTO2016_PRETRAINED_WEIGHTS = '/root/ros_ws/src/replab/models/pinto_model.th'
-FULLIMAGE_PRETRAINED_WEIGHTS = '/root/ros_ws/src/replab/models/fullimage_model.th'
+PINTO2016_PRETRAINED_WEIGHTS = '/root/ros_ws/src/replab/replab_grasping/training/models/pinto_model.th'
+FULLIMAGE_PRETRAINED_WEIGHTS = '/root/ros_ws/src/replab/replab_grasping/training/models/fullimage_model.th'
 METHODS = ('datacollection', 'datacollection-noiseless',
            'principal-axis', 'pinto2016', 'fullimage', 'custom', 'combined')
 
@@ -16,7 +16,8 @@ XY_NOISE = .02
 PRELIFT_HEIGHT = .39
 Z_OFFSET = 0.04
 Z_MIN = .44
-CONTROL_NOISE_COEFFICIENT = 1.00  # recompute if necessary
+CONTROL_NOISE_COEFFICIENT_ALPHA = 1. # recompute if necessary
+CONTROL_NOISE_COEFFICIENT_BETA = 0.
 
 
 # CAMERA

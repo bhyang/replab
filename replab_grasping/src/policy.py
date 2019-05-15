@@ -83,10 +83,6 @@ class PrincipalAxis(Policy):
             center = np.mean(x, axis=0)
             thetas.append(np.arctan2(eigv[1], eigv[0]) % np.pi)
 
-        for blob in blobs:
-            blob[0] *= CONTROL_NOISE_COEFFICIENT
-            blob[1] *= CONTROL_NOISE_COEFFICIENT
-
         return [((blobs[i][0], blobs[i][1], Z_MIN, thetas[i]), confidence)
                 for i, confidence in enumerate(confidences)]
 
@@ -173,7 +169,6 @@ class Pinto2016(Policy):
             all_probabilities.append(probabilities[best_index])
 
         all_grasps = np.array(all_grasps)
-        all_grasps[:, :2] *= CONTROL_NOISE_COEFFICIENT
 
         return [(grasp, all_probabilities[i]) for i, grasp in enumerate(all_grasps)]
 
@@ -235,6 +230,5 @@ class FullImage(Policy):
             all_probabilities.append(probabilities[best_index])
 
         all_grasps = np.array(all_grasps)
-        all_grasps[:, :2] *= CONTROL_NOISE_COEFFICIENT
 
         return [(grasp, all_probabilities[i]) for i, grasp in enumerate(all_grasps)]

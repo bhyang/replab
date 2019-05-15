@@ -204,7 +204,11 @@ class WidowX:
         angle = np.arctan2(y, x)
         return self.move_to_drop(angle)
 
-    def move_to_grasp(self, x, y, z, angle):
+    def move_to_grasp(self, x, y, z, angle, compensate_control_noise=True):
+        if compensate_control_noise:
+            x = (x - CONTROL_NOISE_COEFFICIENT_BETA) / CONTROL_NOISE_COEFFICIENT_ALPHA
+            y = (y - CONTROL_NOISE_COEFFICIENT_BETA) / CONTROL_NOISE_COEFFICIENT_ALPHA
+        
         current_p = self.commander.get_current_pose().pose
         p1 = Pose(position=Point(x=x, y=y, z=z), orientation=DOWN_ORIENTATION)
         plan, f = self.commander.compute_cartesian_path(
