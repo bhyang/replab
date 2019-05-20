@@ -163,7 +163,9 @@ In another, run
 
 The task is to reach a point in 3d space through controlling the 6 joints of the arm.
 
-There are 2 examples in ``/root/ros_ws/rl_scripts/rlkit/examples``, one is designed for a fixed goal (``td3.py``) and the other is designed for a randomized goal (``her/her_td3_gym_fetch_reach.py``).
+There are 4 examples in ``/root/ros_ws/rl_scripts/rlkit/examples``, three is designed for a fixed goal (``{td3, sac, ddpg}.py``) and the other is designed for a randomized goal (``her_td3_gym_fetch_reach.py``).
+
+By default, all of these use the GPU. If you aren't running this with a GPU, please change ``ptu.set_gpu_mode(True)`` to ``ptu.set_gpu_mode(False)`` near the bottom of the example files.
 
 To get started, run
 

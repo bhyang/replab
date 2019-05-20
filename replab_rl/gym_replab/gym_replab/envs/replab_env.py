@@ -234,6 +234,10 @@ class ReplabEnv(gym.Env):
         return state
 
     def __setstate__(self, state):
+        try:
+            self._start_rospy(goal_oriented=state['goal_oriented'])
+        except rospy.ROSException:
+            print('ROS Node already started')
         self.reset_publisher = rospy.Publisher(
             "/replab/reset", String, queue_size=1)
         self.position_updated_publisher = rospy.Publisher(
