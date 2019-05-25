@@ -91,7 +91,8 @@ class ReplabEnv(gym.Env):
             joint_positions = self._get_current_joint_positions()
             new_joint_positions = joint_positions + action
             new_joint_positions = np.clip(np.array(new_joint_positions), JOINT_MIN, JOINT_MAX)
-            self._set_joint_positions(new_joint_positions)
+            self._force_joint_positions(new_joint_positions)
+            
             end_effector_pos = self._get_current_end_effector_position()
             x, y, z = end_effector_pos[0], end_effector_pos[1], end_effector_pos[2]
             conditions = [
@@ -108,11 +109,12 @@ class ReplabEnv(gym.Env):
                     violated_boundary = True
                     break
             if violated_boundary:
-                self._set_joint_positions(joint_positions)
+                self._force_joint_positions(joint_positions)
             else:
-                for i in range(100):
+                #for i in range(100):
                     # ensures arm reaches joint positions specified
-                    p.stepSimulation()
+                 #   p.stepSimulation()
+                 p.stepSimulation()
             self.current_pos = self._get_current_state()
         return self._generate_step_tuple()
 
@@ -141,7 +143,7 @@ class ReplabEnv(gym.Env):
                 "/replab/action/observation", numpy_msg(Floats)).data)
         elif self.mode == "sim":
             p.resetBasePositionAndOrientation(self.arm, [0, 0, 0], p.getQuaternionFromEuler([np.pi, 0, 0]))
-            self._set_joint_positions(NEUTRAL_VALUES)
+            #self._set_joint_positions(NEUTRAL_VALUES)
             self.current_pos = self._get_current_state()
         if self.goal_oriented:
             self.set_goal(self.sample_goal_for_rollout())
@@ -163,7 +165,7 @@ class ReplabEnv(gym.Env):
         return goals
 
     def _get_reward(self, goal):
-        return - (np.linalg.norm(self.current_pos[:3] - goal) ** 2)tinyrendere
+        return - (np.linalg.norm(self.current_pos[:3] - goal) ** 2)
 
     def render(self, mode='human', close=False):
         pass
@@ -288,6 +290,20 @@ class ReplabEnv(gym.Env):
             controlMode=p.POSITION_CONTROL,
             targetPositions=joint_positions
         )
+
+    def _force_joint_positions(self, joint_positions):
+        for i in range(5):
+            p.resetJointState(
+                self.arm,
+                i,
+                joint_pos[i]
+            )
+        for i in range(7, 9):
+            p.resetJointState(
+                self.arm,
+                i,
+                joint_pos[-1]
+            )
 
     def _get_current_state(self):
         return np.concatenate(
