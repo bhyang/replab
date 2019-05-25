@@ -275,6 +275,7 @@ class ReplabEnv(gym.Env):
         
     def _get_current_end_effector_position(self):
         real_position = np.array(list(p.getLinkState(self.arm, 5, computeForwardKinematics=1)[4]))
+        real_position[2] = -real_position[2] #SIM z coordinates are reversed
         adjusted_position = real_position + SIM_START_POSITION
         return adjusted_position
 
