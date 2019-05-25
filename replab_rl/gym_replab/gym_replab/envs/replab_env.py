@@ -110,7 +110,9 @@ class ReplabEnv(gym.Env):
             if violated_boundary:
                 self._set_joint_positions(joint_positions)
             else:
-                p.stepSimulation()
+                for i in range(100):
+                    # ensures arm reaches joint positions specified
+                    p.stepSimulation()
             self.current_pos = self._get_current_state()
         return self._generate_step_tuple()
 
@@ -161,7 +163,7 @@ class ReplabEnv(gym.Env):
         return goals
 
     def _get_reward(self, goal):
-        return - (np.linalg.norm(self.current_pos[:3] - goal) ** 2)
+        return - (np.linalg.norm(self.current_pos[:3] - goal) ** 2)tinyrendere
 
     def render(self, mode='human', close=False):
         pass
@@ -277,13 +279,14 @@ class ReplabEnv(gym.Env):
         return adjusted_position
 
     def _set_joint_positions(self, joint_positions):
-        for i in range(len(joint_positions)):
-            p.setJointMotorControl2(
-                self.arm, 
-                i, 
-                controlMode=p.POSITION_CONTROL,
-                targetPosition=joint_positions[i]
-            )
+        # In SIM, gripper halves are controlled separately
+        joint_positions = list(joint_positions) + [joint_positions[-1]]
+        p.setJointMotorControlArray(
+            self.arm,
+            [0, 1, 2, 3, 4, 7, 8],
+            controlMode=p.POSITION_CONTROL,
+            targetPositions=joint_positions
+        )
 
     def _get_current_state(self):
         return np.concatenate(
@@ -332,6 +335,9 @@ class ReplabEnv(gym.Env):
             except rospy.ROSException:
                 print('ROS Node already started')
         elif state['mode'] == 'sim':
-            self._start_sim(goal_oriented=state['goal_oriented'], render=state['render'])
+            if state['render']:
+                self._start_sim(goal_oriented=state['goal_oriented'], render=False)
+            else:
+                self._start_sim(goal_oriented=state['goal_oriented'], render=state['render'])
         self.__dict__.update(state)
         self.reset()

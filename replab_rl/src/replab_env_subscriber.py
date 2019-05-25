@@ -19,8 +19,7 @@ def activate_widowx():
 
 observation_publisher = rospy.Publisher(
     "/replab/action/observation", numpy_msg(Floats), queue_size=1)
-joint_names = ['joint_1', 'joint_2', 'joint_3',
-               'joint_4', 'joint_5', 'gripper_joint']
+joint_names = JOINT_NAMES
 rospy.sleep(2)
 
 
