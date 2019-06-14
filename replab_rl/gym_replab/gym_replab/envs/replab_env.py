@@ -136,7 +136,7 @@ class ReplabEnv(gym.Env):
             self.current_pos = np.array(rospy.wait_for_message(
                 "/replab/action/observation", numpy_msg(Floats)).data)
         elif self.mode == "sim":
-            #p.resetBasePositionAndOrientation(self.arm, [0, 0, 0], p.getQuaternionFromEuler([np.pi, 0, 0]))
+            p.resetBasePositionAndOrientation(self.arm, [0, 0, 0], p.getQuaternionFromEuler([np.pi, np.pi, np.pi]))
             self._force_joint_positions(RESET_VALUES)
             self.current_pos = self._get_current_state()
         if self.goal_oriented:
