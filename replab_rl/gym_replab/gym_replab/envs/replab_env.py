@@ -353,13 +353,11 @@ class ReplabEnv(gym.Env):
                     "/replab/action", numpy_msg(Floats), queue_size=1)
                 self.current_position_subscriber = rospy.Subscriber(
                     "/replab/action/observation", numpy_msg(Floats), self.update_position)
+            self.__dict__.update(state)
         elif state['mode'] == 'sim':
-            try:
-                if state['render']:
-                    self._start_sim(goal_oriented=state['goal_oriented'], render=False)
-                else:
-                    self._start_sim(goal_oriented=state['goal_oriented'], render=state['render'])
-            except AttributeError:
-                pass
-        self.__dict__.update(state)
+            self.__dict__.update(state)
+            if state['render']:
+                self._start_sim(goal_oriented=state['goal_oriented'], render=False)
+            else:
+                self._start_sim(goal_oriented=state['goal_oriented'], render=state['render'])
         self.reset()
