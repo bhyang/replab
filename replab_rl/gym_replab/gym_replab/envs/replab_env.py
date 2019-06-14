@@ -57,7 +57,6 @@ class ReplabEnv(gym.Env):
 
     def set_goal(self, goal):
         self.goal = goal
-        print("GOAL: %s" % str(self.goal))
 
     def step(self, action):
         """
@@ -110,11 +109,6 @@ class ReplabEnv(gym.Env):
                     break
             if violated_boundary:
                 self._force_joint_positions(joint_positions)
-            else:
-                #for i in range(100):
-                    # ensures arm reaches joint positions specified
-                 #   p.stepSimulation()
-                 p.stepSimulation()
             self.current_pos = self._get_current_state()
         return self._generate_step_tuple()
 
@@ -142,8 +136,8 @@ class ReplabEnv(gym.Env):
             self.current_pos = np.array(rospy.wait_for_message(
                 "/replab/action/observation", numpy_msg(Floats)).data)
         elif self.mode == "sim":
-            p.resetBasePositionAndOrientation(self.arm, [0, 0, 0], p.getQuaternionFromEuler([np.pi, 0, 0]))
-            #self._set_joint_positions(NEUTRAL_VALUES)
+            #p.resetBasePositionAndOrientation(self.arm, [0, 0, 0], p.getQuaternionFromEuler([np.pi, 0, 0]))
+            self._force_joint_positions(RESET_VALUES)
             self.current_pos = self._get_current_state()
         if self.goal_oriented:
             self.set_goal(self.sample_goal_for_rollout())
@@ -277,9 +271,9 @@ class ReplabEnv(gym.Env):
         
     def _get_current_end_effector_position(self):
         real_position = np.array(list(p.getLinkState(self.arm, 5, computeForwardKinematics=1)[4]))
-        real_position[2] = -real_position[2] #SIM z coordinates are reversed
-        adjusted_position = real_position + SIM_START_POSITION
-        return adjusted_position
+        #real_position[2] = -real_position[2] #SIM z coordinates are reversed
+        #adjusted_position = real_position + SIM_START_POSITION
+        return real_position
 
     def _set_joint_positions(self, joint_positions):
         # In SIM, gripper halves are controlled separately
@@ -296,13 +290,13 @@ class ReplabEnv(gym.Env):
             p.resetJointState(
                 self.arm,
                 i,
-                joint_pos[i]
+                joint_positions[i]
             )
         for i in range(7, 9):
             p.resetJointState(
                 self.arm,
                 i,
-                joint_pos[-1]
+                joint_positions[-1]
             )
 
     def _get_current_state(self):
@@ -328,7 +322,7 @@ class ReplabEnv(gym.Env):
                     :3], high=self.obs_space_high[:3], dtype=np.float32),
                 observation=self.observation_space
             ))
-        p.resetSimulation()
+        #p.resetSimulation()
         #p.setTimeStep(0.01)
         path = os.path.abspath(os.path.dirname(__file__))
         self.arm = p.loadURDF(os.path.join(path, "URDFs/widowx/widowx.urdf"), useFixedBase=True)
@@ -351,10 +345,21 @@ class ReplabEnv(gym.Env):
                 self._start_rospy(goal_oriented=state['goal_oriented'])
             except rospy.ROSException:
                 print('ROS Node already started')
+                self.reset_publisher = rospy.Publisher(
+                    "/replab/reset", String, queue_size=1)
+                self.position_updated_publisher = rospy.Publisher(
+                    "/replab/received/position", String, queue_size=1)
+                self.action_publisher = rospy.Publisher(
+                    "/replab/action", numpy_msg(Floats), queue_size=1)
+                self.current_position_subscriber = rospy.Subscriber(
+                    "/replab/action/observation", numpy_msg(Floats), self.update_position)
         elif state['mode'] == 'sim':
-            if state['render']:
-                self._start_sim(goal_oriented=state['goal_oriented'], render=False)
-            else:
-                self._start_sim(goal_oriented=state['goal_oriented'], render=state['render'])
+            try:
+                if state['render']:
+                    self._start_sim(goal_oriented=state['goal_oriented'], render=False)
+                else:
+                    self._start_sim(goal_oriented=state['goal_oriented'], render=state['render'])
+            except AttributeError:
+                pass
         self.__dict__.update(state)
         self.reset()

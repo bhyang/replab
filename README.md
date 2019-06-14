@@ -195,16 +195,18 @@ python /root/ros_ws/rl_scripts/viskit/viskit/frontend.py [DATA_DIRECTORY]
 
 Then, in your browser, navigate to the IP address of the docker container and the port listed by viskit.
 
-Note: by default, the data directory containing parameters and stats are saved in ``/root/ros_ws/rl_scripts/rlikit/data/[NAME]/[DATE_TIME]``
+Note: by default, the data directory containing parameters and stats are saved in ``/root/ros_ws/rl_scripts/rlkit/data/[NAME]/[DATE_TIME]``
 
 ### Evaluating a Policy
 
-Example scripts for evaluating a policy are in ``/root/ros_ws/rl_scripts/rlkit/scripts``. Run:
+The policy is evaluated at every epoch during training (and this data is saved), however you can also manually evaluate a saved policy.
+
+Example scripts for evaluating a policy are in ``/root/ros_ws/rl_scripts/rlkit/scripts``. For example, to visualize a policy on the real robot, run:
 
 ```
 cd /root/ros_ws/rl_scripts/rlkit
 
 source activate rlkit
 
-python scripts/[POLICY_SCRIPT].py --[args specified in script]
+python scripts/[POLICY_SCRIPT].py --[args specified in script] [path_to_params.pkl]
 ```

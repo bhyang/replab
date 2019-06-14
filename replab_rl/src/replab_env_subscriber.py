@@ -50,6 +50,7 @@ def take_action(data):
 
 def reset(data):
     widowx.move_to_reset()
+    widowx.open_gripper()
     rospy.sleep(0.5)
     observation_publisher.publish(np.array(get_state(), dtype=np.float32))
 
