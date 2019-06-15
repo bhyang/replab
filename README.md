@@ -1,6 +1,28 @@
 # REPLAB: A Reproducible Low-Cost Arm Benchmark for Robotic Learning
 ![Imgur](https://i.imgur.com/rf2tucH.jpg)
-This package contains the scripts used to operate a REPLAB cell. More details and the full paper can be found [here](https://sites.google.com/view/replab/).
+This package contains the scripts used to operate a REPLAB cell. 
+
+To assemble a REPLAB cell, please see the instructions [here](https://sites.google.com/view/replab/assembly).
+
+The project page is [here](https://sites.google.com/view/replab/). 
+
+To cite this work, please cite the following papers:
+
+```
+@article{yang_replab_with_rl_arxiv19,
+ author = {Yang, Brian and Zhang, Jesse and Pong, Vitchyr and Levine, Sergey and Jayaraman, Dinesh},
+ journal = {arXiv preprint arXiv:1905.07447},
+ title = {REPLAB: A Reproducible Low-Cost Arm Benchmark Platform for Robotic Learning},
+ year = {2019}
+}
+
+@article{yang_replab_icra19,
+ author = {Yang, Brian and Zhang, Jesse and Jayaraman, Dinesh and Levine, Sergey},
+ journal = {ICRA},
+ title = {REPLAB: A Reproducible Low-Cost Arm Benchmark Platform for Robotic Learning},
+ year = {2019}
+}
+```
 
 ## Setup
 Since the package is meant to be run inside of the provided Docker container, no additional installation setup is required aside from running the Docker image (instructions for setting up a Docker container can be found on the website).
