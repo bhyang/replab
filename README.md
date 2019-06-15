@@ -7,7 +7,6 @@ To assemble a REPLAB cell, please see the instructions [here](https://sites.goog
 The project page is [here](https://sites.google.com/view/replab/). 
 
 To cite this work, please cite the following papers:
-
 ```
 @article{yang_replab_with_rl_arxiv19,
  author = {Yang, Brian and Zhang, Jesse and Pong, Vitchyr and Levine, Sergey and Jayaraman, Dinesh},
