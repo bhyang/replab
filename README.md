@@ -1,4 +1,4 @@
-# REPLAB: A Reproducible Low-Cost Arm Benchmark for Robotic Learning
+# REPLAB: A Reproducible Low-Cost Arm Benchmark Platform for Robotic Learning
 ![Imgur](https://i.imgur.com/rf2tucH.jpg)
 This package contains the scripts used to operate a REPLAB cell. 
 
